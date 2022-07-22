@@ -50,6 +50,7 @@ public class DemoChart {
 		chartSettings.setBufferSelection(true);
 		addClipboardMenuEntry(chartSettings);
 		addToggleAxisLinesMenuEntry(chartSettings);
+		addChromatogramMenu(chartSettings);
 		scrollableChart.applySettings(chartSettings);
 		//
 		while(!shell.isDisposed()) {
@@ -151,6 +152,35 @@ public class DemoChart {
 				}
 				//
 				scrollableChart.applySettings(chartSettings);
+			}
+		});
+	}
+
+	private static void addChromatogramMenu(IChartSettings chartSettings) {
+
+		chartSettings.addMenuEntry(new IChartMenuEntry() {
+
+			@Override
+			public String getName() {
+
+				return "Delete Peaks";
+			}
+
+			@Override
+			public String getCategory() {
+
+				return null;
+			}
+
+			@Override
+			public String[] getCategories() {
+
+				return new String[]{"Chromatogram", "Peaks"};
+			}
+
+			@Override
+			public void execute(Shell shell, ScrollableChart scrollableChart) {
+
 			}
 		});
 	}

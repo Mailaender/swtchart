@@ -95,7 +95,7 @@ public class ScrollableChart extends Composite implements IScrollableChart, IEve
 	private static final String EXTENSION_POINT_MENU_ITEMS = "org.eclipse.swtchart.extensions.menuitems"; //$NON-NLS-1$
 	private static final String EXTENSION_POINT_MENU_ENTRY = "MenuEntry"; //$NON-NLS-1$
 	//
-	private Map<String, Set<IChartMenuEntry>> categoryMenuEntriesMap = new HashMap<>();
+	private Map<String[], Set<IChartMenuEntry>> categoryMenuEntriesMap = new HashMap<>();
 	private Map<String, IChartMenuEntry> menuEntryMap = new HashMap<>();
 	//
 	private Slider sliderVertical;
@@ -1601,14 +1601,14 @@ public class ScrollableChart extends Composite implements IScrollableChart, IEve
 	private void addMenuEntry(IChartMenuEntry menuEntry) {
 
 		if(menuEntry != null) {
-			String category = menuEntry.getCategory();
-			Set<IChartMenuEntry> menuEntries = categoryMenuEntriesMap.get(category);
+			String[] categories = menuEntry.getCategories();
+			Set<IChartMenuEntry> menuEntries = categoryMenuEntriesMap.get(categories);
 			/*
 			 * Create set if not existent.
 			 */
 			if(menuEntries == null) {
 				menuEntries = new HashSet<>();
-				categoryMenuEntriesMap.put(category, menuEntries);
+				categoryMenuEntriesMap.put(categories, menuEntries);
 			}
 			/*
 			 * Add the entry.
@@ -1620,33 +1620,35 @@ public class ScrollableChart extends Composite implements IScrollableChart, IEve
 
 	private void createMenuItems(Menu menu) {
 
-		List<String> categories = new ArrayList<>(categoryMenuEntriesMap.keySet());
-		Collections.sort(categories);
-		Iterator<String> iterator = categories.iterator();
+		List<String[]> categoriesList = new ArrayList<>(categoryMenuEntriesMap.keySet());
+		// Collections.sort(categories);
+		Iterator<String[]> iterator = categoriesList.iterator();
 		while(iterator.hasNext()) {
-			String category = iterator.next();
-			Set<IChartMenuEntry> menuEntries = categoryMenuEntriesMap.get(category);
-			createMenuCategory(menu, category, menuEntries);
+			String[] categories = iterator.next();
+			Set<IChartMenuEntry> menuEntries = categoryMenuEntriesMap.get(categories);
+			createMenuCategory(menu, categories, menuEntries);
 			if(iterator.hasNext()) {
 				new MenuItem(menu, SWT.SEPARATOR);
 			}
 		}
 	}
 
-	private void createMenuCategory(Menu menu, String category, Set<IChartMenuEntry> menuEntries) {
+	private void createMenuCategory(Menu menu, String[] categories, Set<IChartMenuEntry> menuEntries) {
 
-		Menu subMenu;
-		MenuItem menuItem;
+		Menu subMenu = null;
+		MenuItem menuItem = null;
 		/*
 		 * Get the menu.
 		 */
-		if(category.equals("")) { //$NON-NLS-1$
+		if(categories == null || categories.length < 1) {
 			subMenu = menu;
 		} else {
-			menuItem = new MenuItem(menu, SWT.CASCADE);
-			menuItem.setText(category);
-			subMenu = new Menu(menuItem);
-			menuItem.setMenu(subMenu);
+			for(String category : categories) {
+				menuItem = new MenuItem(subMenu, SWT.CASCADE);
+				menuItem.setText(category);
+				subMenu = new Menu(menuItem);
+				menuItem.setMenu(subMenu);
+			}
 		}
 		/*
 		 * Add the items.

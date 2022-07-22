@@ -20,6 +20,11 @@ public interface IChartMenuEntry {
 
 	String getCategory();
 
+	default String[] getCategories() {
+
+		return new String[]{getCategory()};
+	}
+
 	String getName();
 
 	default String getToolTipText() {
