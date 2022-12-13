@@ -272,7 +272,9 @@ public class Title implements ITitle, PaintListener {
 	 * Disposes the resources.
 	 */
 	public void dispose() {
-
+		if(!font.isDisposed()) {
+			font.dispose();
+		}
 		if(!defaultFont.isDisposed()) {
 			defaultFont.dispose();
 		}
